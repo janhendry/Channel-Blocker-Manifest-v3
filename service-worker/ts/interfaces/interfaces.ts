@@ -1,58 +1,67 @@
-import { CommunicationRole, MessageType } from "../enums.js";
+import type { CommunicationRole, MessageType } from "../enums.js";
+import type { StorageObject } from "./storage.js";
 
 export interface Message {
-    sender: CommunicationRole;
-    receiver: CommunicationRole;
-    type: MessageType;
-    content: any;
+	sender: CommunicationRole;
+	receiver: CommunicationRole;
+	type: MessageType;
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	content: any;
 }
 
 export interface AddBlockingRuleMessage extends Message {
-    content: {
-        blockedChannel?: string;
-        excludedChannel?: string;
-        blockingChannelRegExp?: string;
-        blockingCommentRegExp?: string;
-        blockingVideoTitleRegExp?: string;
-        caseInsensitive?: boolean;
-    };
+	content: {
+		blockedChannel?: string;
+		excludedChannel?: string;
+		blockingChannelRegExp?: string;
+		blockingCommentRegExp?: string;
+		blockingVideoTitleRegExp?: string;
+		caseInsensitive?: boolean;
+	};
 }
 
 export interface RemoveBlockingRuleMessage extends Message {
-    content: {
-        blockedChannel?: string[];
-        excludedChannel?: string[];
-        blockingChannelRegExp?: string[];
-        blockingCommentRegExp?: string[];
-        blockingVideoTitleRegExp?: string[];
-    };
+	content: {
+		blockedChannel?: string[];
+		excludedChannel?: string[];
+		blockingChannelRegExp?: string[];
+		blockingCommentRegExp?: string[];
+		blockingVideoTitleRegExp?: string[];
+	};
 }
 
 export interface IsBlockedMessage extends Message {
-    content: {
-        videoTitle?: string;
-        userChannelName?: string;
-        commentContent?: string;
-    };
+	content: {
+		videoTitle?: string;
+		userChannelName?: string;
+		commentContent?: string;
+	};
 }
 
 export interface StorageChangedMessage extends Message {
-    content: undefined;
+	content: undefined;
 }
 
 export interface RequestSettingsMessage extends Message {
-    content: undefined;
+	content: undefined;
 }
 
 export interface SettingsChangedMessage extends Message {
-    content: {
-        buttonVisible: boolean;
-        buttonColor: string;
-        buttonSize: number;
-        animationSpeed: number;
-    };
+	content: {
+		buttonVisible: boolean;
+		buttonColor: string;
+		buttonSize: number;
+		animationSpeed: number;
+	};
 }
 
 export interface Tab extends chrome.tabs.Tab {
-    id: number;
+	id: number;
 }
+
+export type AppState = {
+	buttonVisible: boolean;
+	buttonColor: string;
+	buttonSize: number;
+	animationSpeed: number;
+};

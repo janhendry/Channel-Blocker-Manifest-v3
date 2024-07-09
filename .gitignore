@@ -135,3 +135,5 @@ out
 dist
 dist-firefox
 bin
+
+env.ts

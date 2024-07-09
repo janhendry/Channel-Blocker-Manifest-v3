@@ -1,0 +1,44 @@
+{
+    "blockedChannels": [
+        "aa",
+        "sadf",
+        "asdf",
+        "asd",
+        "fa",
+        "sdf",
+        "fas",
+        "df",
+        "kla"
+    ],
+    "blockedChannelsRegExp": {
+        "d": "",
+        "dddfg": "",
+        "ss": ""
+    },
+    "blockedComments": {
+        "sdfsd": "",
+        "ss": ""
+    },
+    "blockedVideoTitles": {
+        "adff": "",
+        "dfgsdfgsdfg": "",
+        "f": "",
+        "sd": "",
+        "sdfg": "",
+        "ss": ""
+    },
+    "excludedChannels": [
+        "sdfasdf",
+        "ss"
+    ],
+    "settings": {
+        "advancedView": false,
+        "animationSpeed": 200,
+        "buttonColor": "#717171",
+        "buttonSize": 142,
+        "buttonVisible": true,
+        "design": 0,
+        "openPopup": false
+    },
+    "version": "1.0"
+}
