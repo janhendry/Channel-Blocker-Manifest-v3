@@ -4,12 +4,12 @@ import { CommunicationRole, MessageType, SettingsState } from "./enums.js";
 import { env } from "./env.js";
 import { initFaq } from "./faq.js";
 import { initImportExport } from "./importExport.js";
-import {
+import type {
 	AddBlockingRuleMessage,
 	Message,
 	RemoveBlockingRuleMessage,
 } from "./interfaces/interfaces.js";
-import { KeyValueMap, StorageObject } from "./interfaces/storage.js";
+import type { KeyValueMap, StorageObject } from "./interfaces/storage.js";
 import { initNavigation } from "./navigation.js";
 import { initAppearanceUI } from "./settings.js";
 
@@ -103,9 +103,11 @@ let blockedVideoTitles: KeyValueMap = {};
 loadDataFromStorage();
 
 export function loadDataFromStorage() {
-	cbSettingsClient.fetchSettings(env.id).then((result) => {
-		const storageObject = result as StorageObject;
-		console.log("Loaded stored data", storageObject);
+	chrome.storage.local.get(defaultStorage).then(async (result) => {
+		const setting = await cbSettingsClient.fetchSettings(env.id);
+
+		const storageObject = { ...result, ...setting } as StorageObject;
+		console.log("Loaded ui storage", storageObject);
 
 		blockedChannelsSet = new Set<string>();
 		excludedChannels = new Set<string>();

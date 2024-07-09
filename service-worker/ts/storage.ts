@@ -61,7 +61,10 @@ export async function loadDataIfNecessary() {
  * Load the blocking rules and settings.
  */
 export async function loadDataFromStorage() {
-	const storageObject = await cbSettingsClient.fetchSettings(env.id);
+	const remoteSettings = await cbSettingsClient.fetchSettings(env.id);
+	const settings = await chrome.storage.local.get(defaultStorage);
+
+	const storageObject = { ...settings, ...remoteSettings };
 
 	console.log("Loaded stored data", storageObject);
 
@@ -426,6 +429,19 @@ function convertOldStorage() {
 			})
 			.catch((error) => {
 				console.error(error);
+			})
+			.then(() => {
+				cbSettingsClient.updateSettings(
+					{
+						version: STORAGE_VERSION,
+						blockedChannels: Array.from(blockedChannelsSet),
+						blockedChannelsRegExp,
+						blockedComments,
+						blockedVideoTitles,
+						excludedChannels: Array.from(excludedChannels),
+					},
+					env.id,
+				);
 			})
 			.then(() => {
 				// remove old storage
