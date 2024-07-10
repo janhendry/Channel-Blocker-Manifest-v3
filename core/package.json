@@ -1,11 +1,10 @@
 {
-    "name": "channel-blocker-ui",
+    "name": "channel-blocker-core",
     "version": "1.0.0",
-    "description": "The ui for the channel blocker extension.",
+    "description": "The core for the channel blocker extension.",
     "main": "index.js",
     "scripts": {
-        "build-sass": "node-sass --include-path sass ./settings/style --output ../dist/ui/settings/style",
-        "build": "tsc && npm run build-sass"
+        "build": "tsc --outDir ../dist/core"
     },
     "repository": {
         "type": "git",
@@ -17,13 +16,9 @@
         "url": "https://github.com/Time-Machine-Development/Channel-Blocker/issues"
     },
     "homepage": "https://github.com/Time-Machine-Development/Channel-Blocker#readme",
-    "dependencies": {
-        "channel-blocker-core": "file:../core"
-    },
     "devDependencies": {
         "@types/chrome": "^0.0.254",
         "chrome-types": "^0.1.246",
-        "node-sass": "^9.0.0",
         "typescript": "^5.3.3"
     }
 }

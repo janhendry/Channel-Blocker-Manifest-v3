@@ -1,245 +1,84 @@
-import { CommunicationRole, MessageType, SettingsDesign, SettingsState } from "./enums.js";
-import { clamp } from "./helper.js";
-import { loadDataFromStorage, setSettingsState } from "./index.js";
-import { StorageChangedMessage } from "./interfaces/interfaces.js";
-import { CombinedStorageObject, OldStorageObject } from "./interfaces/storage.js";
-import { loadSettingsDataFromStorage } from "./settings.js";
-
-const STORAGE_VERSION = "1.0";
+import {
+	CommunicationRole,
+	MessageType,
+	SettingsDesign,
+	SettingsState,
+} from "../../../core/src/index.js";
+import type { StorageChangedMessage } from "../../../core/src/type/Messages.js";
+import type { Settings, SettingsDTO } from "../../../core/src/type/Settings";
+import { mapSettingsToDTO } from "../../../core/src/util.js";
+import { storage } from "../../../service-worker/ts/index.js";
 
 /**
  * Initialize the import and export settings section.
  */
 export function initImportExport() {
-    const importBtn = document.getElementById("import-btn") as HTMLButtonElement;
-    const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
-    const fileLoaderInput = document.getElementById("file-loader-input") as HTMLInputElement;
+	const importBtn = document.getElementById("import-btn") as HTMLButtonElement;
+	const exportBtn = document.getElementById("export-btn") as HTMLButtonElement;
+	const fileLoaderInput = document.getElementById(
+		"file-loader-input",
+	) as HTMLInputElement;
 
-    fileLoaderInput.addEventListener("change", (event) => {
-        let file = fileLoaderInput?.files?.item(0);
-        if (file) {
-            const fileReader = new FileReader();
-            fileReader.addEventListener(
-                "load",
-                () => {
-                    console.log("FileReader loaded");
+	fileLoaderInput.addEventListener("change", (event) => {
+		const file = fileLoaderInput?.files?.item(0);
+		if (file) {
+			const fileReader = new FileReader();
+			fileReader.addEventListener(
+				"load",
+				async () => {
+					console.log("FileReader loaded");
 
-                    try {
-                        const fileContent = fileReader.result;
-                        if (typeof fileContent === "string") {
-                            const fileContentJson = JSON.parse(fileContent);
-                            if (fileContentJson.version === undefined) {
-                                loadOldFormat(fileContentJson);
-                            } else {
-                                loadNewFormat(fileContentJson);
-                            }
-                            sendStorageChangeMsg();
-                        } else {
-                            throw new Error("Could not read file.");
-                        }
-                    } catch (error) {
-                        console.error(`Error: ${error}`);
+					try {
+						const fileContent = fileReader.result;
+						if (typeof fileContent === "string") {
+							const fileContentJson = JSON.parse(fileContent) as SettingsDTO;
 
-                        alert(`Error: ${error}`);
-                    }
-                },
-                false
-            );
-            fileReader.readAsText(file, "UTF-8");
-        }
-    });
+							storage.setSettings(fileContentJson);
+							await storage.pushSettings();
 
-    importBtn.addEventListener(
-        "click",
-        () => {
-            // Check if the file-APIs are supported.
-            if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-                // The file-APIs are not supported.
-                alert("The file-APIs are not supported. You are not able to import.");
-                return;
-            }
-            fileLoaderInput.click();
-        },
-        false
-    );
+							sendStorageChangeMsg();
+						} else {
+							throw new Error("Could not read file.");
+						}
+					} catch (error) {
+						console.error(`Error: ${error}`);
 
-    exportBtn.addEventListener("click", () => {
-        const defaultCombinedStorageObject: CombinedStorageObject = {
-            version: STORAGE_VERSION,
-            settings: {
-                design: SettingsDesign.DETECT,
-                advancedView: false,
-                openPopup: false,
-                buttonVisible: true,
-                buttonColor: "#717171",
-                buttonSize: 142,
-                animationSpeed: 200,
-            },
-            blockedChannels: [],
-            excludedChannels: [],
-            blockedVideoTitles: {},
-            blockedChannelsRegExp: {},
-            blockedComments: {},
-        };
+						alert(`Error: ${error}`);
+					}
+				},
+				false,
+			);
+			fileReader.readAsText(file, "UTF-8");
+		}
+	});
 
-        chrome.storage.local.get(defaultCombinedStorageObject).then((result) => {
-            const combinedStorageObject = result as CombinedStorageObject;
-            const currentDate = new Date();
-            download(
-                JSON.stringify(combinedStorageObject),
-                `ChannelBlocker ${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}.save`,
-                ".save"
-            );
-        });
-    });
-}
+	importBtn.addEventListener(
+		"click",
+		() => {
+			// Check if the file-APIs are supported.
+			if (
+				!window.File ||
+				!window.FileReader ||
+				!window.FileList ||
+				!window.Blob
+			) {
+				// The file-APIs are not supported.
+				alert("The file-APIs are not supported. You are not able to import.");
+				return;
+			}
+			fileLoaderInput.click();
+		},
+		false,
+	);
 
-/**
- * Load the date from the old format and add them to currently saved data.
- * @param oldStorageObject The loaded JSON data.
- */
-function loadOldFormat(oldStorageObject: OldStorageObject) {
-    const defaultCombinedStorageObject: CombinedStorageObject = {
-        version: STORAGE_VERSION,
-        settings: {
-            design: SettingsDesign.DETECT,
-            advancedView: false,
-            openPopup: false,
-            buttonVisible: true,
-            buttonColor: "#717171",
-            buttonSize: 142,
-            animationSpeed: 200,
-        },
-        blockedChannels: [],
-        excludedChannels: [],
-        blockedVideoTitles: {},
-        blockedChannelsRegExp: {},
-        blockedComments: {},
-    };
-
-    chrome.storage.local.get(defaultCombinedStorageObject).then((result) => {
-        const combinedStorageObject = result as CombinedStorageObject;
-
-        // Load blocking rules
-        if (oldStorageObject[0] !== undefined) {
-            combinedStorageObject.blockedChannels.push(...Object.keys(oldStorageObject[0]));
-        }
-        if (oldStorageObject[1] !== undefined) {
-            for (const key in oldStorageObject[1]) {
-                if (Object.prototype.hasOwnProperty.call(oldStorageObject[1], key)) {
-                    combinedStorageObject.blockedVideoTitles[key] = oldStorageObject[1][key] === 0 ? "i" : "";
-                }
-            }
-        }
-        if (oldStorageObject[2] !== undefined) {
-            for (const key in oldStorageObject[2]) {
-                if (Object.prototype.hasOwnProperty.call(oldStorageObject[2], key)) {
-                    combinedStorageObject.blockedChannelsRegExp[key] = oldStorageObject[2][key] === 0 ? "i" : "";
-                }
-            }
-        }
-        if (oldStorageObject[3] !== undefined) {
-            for (const key in oldStorageObject[3]) {
-                if (Object.prototype.hasOwnProperty.call(oldStorageObject[3], key)) {
-                    combinedStorageObject.blockedComments[key] = oldStorageObject[3][key] === 0 ? "i" : "";
-                }
-            }
-        }
-        if (oldStorageObject[4] !== undefined) {
-            combinedStorageObject.excludedChannels.push(...Object.keys(oldStorageObject[4]));
-        }
-
-        // Load settings
-        if (oldStorageObject?.settings_ui?.[0] !== undefined) {
-            // The old format only had two designs. Dark: 0 and Light: 1.
-            // Currently Device: 0 is the default, therefore adding 1 adjusts this.
-            combinedStorageObject.settings.design = clamp(0, 2, oldStorageObject.settings_ui[0] + 1);
-        }
-        if (oldStorageObject?.settings_ui?.[1] !== undefined) {
-            // No longer in use
-            combinedStorageObject.settings.advancedView = oldStorageObject.settings_ui[1];
-        }
-        if (oldStorageObject?.settings_ui?.[2] !== undefined) {
-            combinedStorageObject.settings.openPopup = oldStorageObject.settings_ui[2];
-        }
-        if (oldStorageObject?.content_ui?.[0] !== undefined) {
-            combinedStorageObject.settings.buttonVisible = oldStorageObject.content_ui[0];
-        }
-        if (oldStorageObject?.content_ui?.[1] !== undefined) {
-            combinedStorageObject.settings.buttonColor = oldStorageObject.content_ui[1];
-        }
-        if (oldStorageObject?.content_ui?.[2] !== undefined) {
-            // The old default was 106, but in the new implementation this is pretty small so add 36 to adjust.
-            combinedStorageObject.settings.buttonSize = clamp(100, 200, oldStorageObject.content_ui[2] + 36);
-        }
-        if (oldStorageObject?.content_ui?.[3] !== undefined) {
-            combinedStorageObject.settings.animationSpeed = clamp(100, 200, oldStorageObject.content_ui[3]);
-        }
-
-        // Save data
-        chrome.storage.local.set(combinedStorageObject);
-        setSettingsState(SettingsState.BLOCKED_CHANNELS);
-        loadDataFromStorage();
-        loadSettingsDataFromStorage();
-    });
-}
-
-/**
- * Load the date from the new format and add them to currently saved data.
- * @param oldStorageObject The loaded JSON data.
- */
-function loadNewFormat(loadedStorageObject: CombinedStorageObject) {
-    const defaultCombinedStorageObject: CombinedStorageObject = {
-        version: STORAGE_VERSION,
-        settings: {
-            design: SettingsDesign.DETECT,
-            advancedView: false,
-            openPopup: false,
-            buttonVisible: true,
-            buttonColor: "#717171",
-            buttonSize: 142,
-            animationSpeed: 200,
-        },
-        blockedChannels: [],
-        excludedChannels: [],
-        blockedVideoTitles: {},
-        blockedChannelsRegExp: {},
-        blockedComments: {},
-    };
-
-    chrome.storage.local.get(defaultCombinedStorageObject).then((result) => {
-        const storageObject = result as CombinedStorageObject;
-
-        console.log("NEW FORMAT", storageObject);
-        console.log("NEW FORMAT", loadedStorageObject);
-        console.log(
-            "filter",
-            loadedStorageObject.blockedChannels.filter((channel) => {
-                return !storageObject.blockedChannels.includes(channel);
-            })
-        );
-
-        storageObject.blockedChannels.push(
-            ...loadedStorageObject.blockedChannels.filter((channel) => {
-                return !storageObject.blockedChannels.includes(channel);
-            })
-        );
-        storageObject.blockedVideoTitles = { ...storageObject.blockedVideoTitles, ...loadedStorageObject.blockedVideoTitles };
-        storageObject.blockedChannelsRegExp = { ...storageObject.blockedChannelsRegExp, ...loadedStorageObject.blockedChannelsRegExp };
-        storageObject.blockedComments = { ...storageObject.blockedComments, ...loadedStorageObject.blockedComments };
-        storageObject.excludedChannels.push(
-            ...loadedStorageObject.excludedChannels.filter((channel) => {
-                return !storageObject.excludedChannels.includes(channel);
-            })
-        );
-        storageObject.settings = { ...storageObject.settings, ...loadedStorageObject.settings };
-
-        // Save data
-        chrome.storage.local.set(storageObject);
-        setSettingsState(SettingsState.BLOCKED_CHANNELS);
-        loadDataFromStorage();
-        loadSettingsDataFromStorage();
-    });
+	exportBtn.addEventListener("click", () => {
+		const currentDate = new Date();
+		download(
+			JSON.stringify(mapSettingsToDTO(storage.settings), null, 2),
+			`ChannelBlocker ${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${currentDate.getDate()}.json`,
+			".json",
+		);
+	});
 }
 
 /**
@@ -249,30 +88,29 @@ function loadNewFormat(loadedStorageObject: CombinedStorageObject) {
  * @param type The type of the file.
  */
 function download(data: BlobPart, filename: string, type: string) {
-    const file = new Blob([data], { type: type });
-    const a = document.createElement("a");
-    const url = URL.createObjectURL(file);
+	const file = new Blob([data], { type: type });
+	const a = document.createElement("a");
+	const url = URL.createObjectURL(file);
 
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    }, 0);
+	a.href = url;
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	setTimeout(() => {
+		document.body.removeChild(a);
+		window.URL.revokeObjectURL(url);
+	}, 0);
 }
 
 /**
  * Send a message to the service worker, that informs them that the storage was changed
  */
 function sendStorageChangeMsg() {
-    const message: StorageChangedMessage = {
-        sender: CommunicationRole.SETTINGS,
-        receiver: CommunicationRole.SERVICE_WORKER,
-        type: MessageType.STORAGE_CHANGED,
-        content: undefined,
-    };
-    chrome.runtime.sendMessage(message);
-    console.log("sendStorageChangeMsg");
+	const message: StorageChangedMessage = {
+		sender: CommunicationRole.SETTINGS,
+		receiver: CommunicationRole.SERVICE_WORKER,
+		type: MessageType.STORAGE_CHANGED,
+	};
+	chrome.runtime.sendMessage(message);
+	console.log("sendStorageChangeMsg");
 }

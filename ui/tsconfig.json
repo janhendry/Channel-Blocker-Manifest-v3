@@ -8,6 +8,16 @@
         "strict": true,
         "skipLibCheck": true
     },
-    "include": ["./**/*.ts"],
-    "exclude": ["../dist"]
+    "paths": {
+        "#core/*": [
+            "../core/src/*"
+        ]
+    },
+    "include": [
+        "./**/*.ts",
+        "./../core/src/**/*.ts"
+    ],
+    "exclude": [
+        "../dist"
+    ]
 }
