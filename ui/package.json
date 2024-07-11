@@ -4,8 +4,8 @@
     "description": "The ui for the channel blocker extension.",
     "main": "index.js",
     "scripts": {
-        "build-sass": "node-sass --include-path sass ./settings/style --output ../dist/ui/settings/style",
-        "build": "tsc && npm run build-sass"
+        "build-sass": "node-sass --include-path sass ./src/settings/style --output ./dist/settings/style",
+        "build": "esbuild --bundle src/settings/scripts/index.ts --outfile=dist/settings/index.js && npm run build-sass"
     },
     "repository": {
         "type": "git",
@@ -21,6 +21,7 @@
         "core": "1.0.0"
     },
     "devDependencies": {
-        "node-sass": "^9.0.0"
+        "node-sass": "^9.0.0",
+        "esbuild": "^0.23.0"
     }
 }

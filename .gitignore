@@ -137,3 +137,5 @@ dist-firefox
 bin
 
 env.ts
+
+*.local/

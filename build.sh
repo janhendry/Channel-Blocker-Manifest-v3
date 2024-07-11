@@ -44,8 +44,8 @@ cp -r ui/dist/* "$destination_folder/ui"
 # Copy HTML files from the ui folder and its subfolders
 # find "$ui_folder/settings" -name "*.html" -exec cp {} "$destination_folder/settings/{}" \;
 # find "$ui_folder/popup" -name "*.html" -exec cp {} "$destination_folder/popup/{}" \;
-cp "$ui_folder"/settings/*.html "$destination_folder/ui/settings/"
-# cp "$ui_fol der"/popup/*.html "$destination_folder/ui/popup/"
+cp -r ui/src/settings/*.html "$destination_folder/ui/settings/"
+# cp "ui/src/popup/*.html "$destination_folder/ui/popup/"
 
 echo "Files copied to ./dist folder."
 
