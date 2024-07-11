@@ -15,7 +15,7 @@ rm -rf "$destination_folder_firefox"
 rm -rf ./ui/dist
 rm -rf ./worker/dist
 rm -rf ./content-scripts/dist
-rm -rf ./core/dist
+# rm -rf ./core/dist
 
 # Run npm run build in content-scripts folder
 cd content-scripts

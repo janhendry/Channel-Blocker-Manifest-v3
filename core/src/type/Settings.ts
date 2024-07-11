@@ -1,11 +1,13 @@
 import type { SettingsDesign } from "./enums";
 
 export type Settings = {
+	storageVersion: string;
 	rules: Rules;
 	ui: UiSettings;
 };
 
 export type SettingsDTO = {
+	storageVersion: string;
 	rules: RulesDTO;
 	ui: UiSettings;
 };

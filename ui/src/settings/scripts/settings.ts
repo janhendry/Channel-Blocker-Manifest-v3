@@ -3,6 +3,8 @@ import {
 	MessageType,
 	type SettingsChangedMessage,
 	SettingsDesign,
+	log,
+	mapSettingsToDTO,
 	storage,
 } from "core";
 
@@ -128,7 +130,9 @@ function sendSettingChangedMessage() {
 		sender: CommunicationRole.SETTINGS,
 		receiver: CommunicationRole.SERVICE_WORKER,
 		type: MessageType.SETTINGS_CHANGED,
-		content: storage.settings,
+		content: mapSettingsToDTO(storage.settings),
 	};
+
+	log("Send", "Config tab sending SettingsChangedMessage", message);
 	chrome.runtime.sendMessage(message);
 }

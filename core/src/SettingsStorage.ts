@@ -1,10 +1,21 @@
 import { CbClient } from "./Client.js";
+import { storage } from "./index.js";
 import { sendSettingsChangedMessage } from "./message/sendSettingsChangedMessage.js";
 import { sendStorageChangedMessage } from "./message/sendStorageChangedMessage.js";
 import type { Settings, SettingsDTO } from "./type/Settings.js";
-import { mapDTOtoRules, mapDTOtoSettings, mapRulesToDTO } from "./util.js";
+import { CommunicationRole, MessageType } from "./type/enums.js";
+
+import {
+	mapDTOtoRules,
+	mapDTOtoSettings,
+	mapRulesToDTO,
+	mapSettingsToDTO,
+} from "./util.js";
+
+const STORAGE_VERSION = "1.0";
 
 const defaultSettings: Settings = {
+	storageVersion: STORAGE_VERSION,
 	ui: {
 		design: 0,
 		advancedView: false,
@@ -23,7 +34,6 @@ const defaultSettings: Settings = {
 	},
 };
 
-const STORAGE_VERSION = "1.0";
 export class SettingsStorage {
 	private id: string;
 	private cbClient: CbClient;
@@ -44,18 +54,30 @@ export class SettingsStorage {
 		// const rules = await this.cbClient.fetchSettings(this.id);
 		const storageSettings = (await chrome.storage.local.get()) as SettingsDTO;
 
-		this.settings = mapDTOtoSettings(storageSettings);
+		try {
+			this.settings = mapDTOtoSettings(storageSettings);
+		} catch (e) {
+			console.error("Failed to load settings from storage", e);
+			chrome.storage.local.clear();
+			chrome.storage.local.set(mapSettingsToDTO(defaultSettings));
+			this.settings = defaultSettings;
+		}
 
-		// !FIXME: Why send 2 messages?
+		// !FIXME: Why send 2 messages? // Fix Roles
 		sendStorageChangedMessage();
-		sendSettingsChangedMessage();
+		sendSettingsChangedMessage({
+			sender: CommunicationRole.SETTINGS,
+			receiver: CommunicationRole.CONTENT_SCRIPT,
+			type: MessageType.SETTINGS_CHANGED,
+			content: mapSettingsToDTO(storage.settings),
+		});
 	}
 
 	/**
 	 * Push the settings to the server and local storage.
 	 */
 	public async pushSettings(): Promise<void> {
-		await chrome.storage.local.set(this.settings);
+		await chrome.storage.local.set(mapSettingsToDTO(this.settings));
 		// this.cbClient.updateSettings(mapRulesToDTO(this.settings.rules), this.id);
 	}
 
@@ -69,7 +91,7 @@ export class SettingsStorage {
 
 	public setSettings(settings: SettingsDTO) {
 		this.settings = {
-			ui: this.settings.ui,
+			...this.settings,
 			rules: mapDTOtoRules(settings.rules),
 		};
 	}

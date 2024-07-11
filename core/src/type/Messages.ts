@@ -1,4 +1,4 @@
-import type { Settings } from "./Settings";
+import type { Settings, SettingsDTO } from "./Settings";
 import type { CommunicationRole, MessageType } from "./enums";
 
 export type Message =
@@ -43,7 +43,7 @@ export type RequestSettingsMessage = MessageCore & {
 
 export type SettingsChangedMessage = MessageCore & {
 	type: MessageType.SETTINGS_CHANGED;
-	content: Settings;
+	content: SettingsDTO;
 };
 
 export type IsBlockedMessage = MessageCore & {

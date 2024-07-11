@@ -3,6 +3,7 @@ import {
 	MessageType,
 	type SettingsDTO,
 	type StorageChangedMessage,
+	log,
 	mapSettingsToDTO,
 	storage,
 } from "core";
@@ -109,6 +110,7 @@ function sendStorageChangeMsg() {
 		receiver: CommunicationRole.SERVICE_WORKER,
 		type: MessageType.STORAGE_CHANGED,
 	};
+
+	log("Send", "Config page sending StorageChangedMessage to service worker");
 	chrome.runtime.sendMessage(message);
-	console.log("sendStorageChangeMsg");
 }

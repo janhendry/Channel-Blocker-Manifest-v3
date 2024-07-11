@@ -4,6 +4,7 @@ import {
 	MessageType,
 	type RemoveBlockingRuleMessage,
 	SettingsState,
+	log,
 } from "core";
 import { settingsState } from "../index";
 import { UI } from "./UI";
@@ -67,6 +68,7 @@ export function addNewRule() {
 			caseInsensitive: UI.caseInsensitiveCheckbox.checked,
 		},
 	};
+	log("Send", "Config tab sending AddBlockingRuleMessage", message);
 	chrome.runtime.sendMessage(message);
 	UI.blockedChannelsInput.value = "";
 }
@@ -108,5 +110,7 @@ export function removeRule() {
 					: undefined,
 		},
 	};
+
+	log("Send", "Config tab sending RemoveBlockingRuleMessage", message);
 	chrome.runtime.sendMessage(message);
 }

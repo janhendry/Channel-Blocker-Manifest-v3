@@ -1,4 +1,4 @@
-import { CommunicationRole, MessageType, storage } from "core";
+import { CommunicationRole, MessageType, log, storage } from "core";
 import type { Message } from "core";
 import { getConfigTabs } from "../helper";
 import { sendSettingsChangedMessage } from "../sendMessage/sendSettingsChangedMessage";
@@ -20,9 +20,10 @@ export function initMessageHandlers() {
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 			sendResponse: (response?: any) => void,
 		) => {
-			if (message.receiver !== CommunicationRole.SERVICE_WORKER) return;
+			log("Receive", "Worker received message", message);
+			// if (message.receiver !== CommunicationRole.SERVICE_WORKER) return;
 
-			storage.fetchSettings();
+			await storage.fetchSettings();
 
 			switch (message.type) {
 				case MessageType.ADD_BLOCKING_RULE:

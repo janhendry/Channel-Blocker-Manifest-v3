@@ -1,4 +1,9 @@
-import { type RequestSettingsMessage, type Settings, storage } from "core";
+import {
+	type RequestSettingsMessage,
+	type SettingsDTO,
+	mapSettingsToDTO,
+	storage,
+} from "core";
 
 /**
  * Returns the settings.
@@ -7,6 +12,6 @@ import { type RequestSettingsMessage, type Settings, storage } from "core";
  */
 export function handleRequestSettings(
 	message: RequestSettingsMessage,
-): Settings {
-	return storage.settings;
+): SettingsDTO {
+	return mapSettingsToDTO(storage.settings);
 }

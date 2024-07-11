@@ -1,4 +1,4 @@
-import { CommunicationRole, MessageType, storage } from "../index";
+import { CommunicationRole, MessageType, log, storage } from "../index";
 import type { SettingsChangedMessage } from "../type/Messages";
 
 /**
@@ -7,25 +7,21 @@ import type { SettingsChangedMessage } from "../type/Messages";
  * @param message The settings changed message.
  */
 export async function sendSettingsChangedMessage(
-	message: SettingsChangedMessage = {
-		sender: CommunicationRole.SETTINGS,
-		receiver: CommunicationRole.CONTENT_SCRIPT,
-		type: MessageType.SETTINGS_CHANGED,
-		content: storage.settings,
-	},
+	message: SettingsChangedMessage,
 ) {
-	message.receiver = CommunicationRole.CONTENT_SCRIPT;
-
-	// !FIXME: Bug or feature. Old code set only the content of the message to the settings.ui.
-	storage.settings.ui = {
-		...storage.settings.ui,
-		...message.content,
-	};
-
 	chrome.tabs.query({ url: "*://www.youtube.com/*" }, (tabs) => {
 		for (let index = 0; index < tabs.length; index++) {
 			const tab = tabs[index];
-			if (tab.id !== undefined) chrome.tabs.sendMessage(tab.id, message);
+			if (tab.id !== undefined) {
+				log("Send", `SettingsChangedMessage to tab ${tab.id}`);
+
+				chrome.tabs.sendMessage(tab.id, message);
+			}
 		}
 	});
 }
+
+// sender: CommunicationRole.SETTINGS,
+// receiver: CommunicationRole.CONTENT_SCRIPT,
+// type: MessageType.SETTINGS_CHANGED,
+// content: storage.settings,

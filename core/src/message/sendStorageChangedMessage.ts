@@ -1,4 +1,4 @@
-import { CommunicationRole, MessageType } from "../index";
+import { CommunicationRole, MessageType, log } from "../index";
 import type { StorageChangedMessage } from "../type/Messages";
 import { getConfigTabs } from "./helper";
 
@@ -15,8 +15,10 @@ export async function sendStorageChangedMessage() {
 	chrome.tabs.query({ url: "*://www.youtube.com/*" }, (tabs) => {
 		for (let index = 0; index < tabs.length; index++) {
 			const tab = tabs[index];
-			if (tab.id !== undefined)
+			if (tab.id !== undefined) {
+				log("Send", "Sending StorageChangedMessage to tab", tab.id);
 				chrome.tabs.sendMessage(tab.id, storageChangedMessage);
+			}
 		}
 	});
 
@@ -29,6 +31,7 @@ export async function sendStorageChangedMessage() {
 			type: MessageType.STORAGE_CHANGED,
 			content: undefined,
 		};
+		log("Send", "Sending StorageChangedMessage to config tab", tab.id);
 		chrome.tabs.sendMessage(tab.id, storageChangedMessageForSettings);
 	}
 }

@@ -78,14 +78,27 @@ export function mapRulesToDTO(roles: Roles): RolesDTO {
 
 export function mapSettingsToDTO(settings: Settings): SettingsDTO {
 	return {
+		...settings,
 		rules: mapRulesToDTO(settings.rules),
-		ui: settings.ui,
 	};
 }
 
 export function mapDTOtoSettings(dto: SettingsDTO): Settings {
 	return {
+		...dto,
 		rules: mapDTOtoRules(dto.rules),
-		ui: dto.ui,
 	};
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export function log(header: string, ...message: any[]) {
+	if (header) {
+		console.log(
+			`%c[${header}]`,
+			"color: white; background-color: blue; padding: 3px; border-radius: 5px;",
+			...message,
+		);
+	} else {
+		console.log(...message);
+	}
 }

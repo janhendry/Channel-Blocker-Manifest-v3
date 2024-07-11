@@ -2,6 +2,7 @@ import {
 	CommunicationRole,
 	MessageType,
 	type SettingsChangedMessage,
+	mapSettingsToDTO,
 	storage,
 } from "core";
 
@@ -15,7 +16,7 @@ export async function sendSettingsChangedMessage(
 		sender: CommunicationRole.SETTINGS,
 		receiver: CommunicationRole.CONTENT_SCRIPT,
 		type: MessageType.SETTINGS_CHANGED,
-		content: storage.settings,
+		content: mapSettingsToDTO(storage.settings),
 	},
 ) {
 	message.receiver = CommunicationRole.CONTENT_SCRIPT;
