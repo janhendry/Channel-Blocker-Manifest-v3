@@ -21,9 +21,6 @@
         "core": "1.0.0"
     },
     "devDependencies": {
-        "@types/chrome": "^0.0.254",
-        "chrome-types": "^0.1.246",
-        "node-sass": "^9.0.0",
-        "typescript": "^5.3.3"
+        "node-sass": "^9.0.0"
     }
 }

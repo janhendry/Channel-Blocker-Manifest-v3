@@ -4,6 +4,7 @@ manifest_file="./manifest.json"
 manifest_file_firefox="./manifest.json.firefox"
 images_folder="./images"
 ui_folder="./ui"
+
 destination_folder="./dist"
 destination_folder_firefox="./dist-firefox"
 
@@ -17,7 +18,7 @@ npm run build
 cd ..
 
 # Run npm run build in service-worker folder
-cd service-worker
+cd worker
 npm run build
 cd ..
 
@@ -28,16 +29,23 @@ cd ..
 
 # Create the destination folder if it doesn't exist
 mkdir -p "$destination_folder/images"
+mkdir -p "$destination_folder/content-scripts"
+mkdir -p "$destination_folder/worker"
+mkdir -p "$destination_folder/ui"
 
 # Copy the contents of the images folder
 cp "$manifest_file" "$destination_folder"
 cp -r "$images_folder"/* "$destination_folder/images"
+# cp -r content-scripts/dist/* "$destination_folder/content-scripts"
+cp -r worker/dist/* "$destination_folder/worker"
+cp -r ui/dist/* "$destination_folder/ui"
+
 
 # Copy HTML files from the ui folder and its subfolders
 # find "$ui_folder/settings" -name "*.html" -exec cp {} "$destination_folder/settings/{}" \;
 # find "$ui_folder/popup" -name "*.html" -exec cp {} "$destination_folder/popup/{}" \;
-cp -v "$ui_folder"/settings/*.html "$destination_folder/ui/settings/"
-cp -v "$ui_folder"/popup/*.html "$destination_folder/ui/popup/"
+cp "$ui_folder"/settings/*.html "$destination_folder/ui/settings/"
+# cp "$ui_fol der"/popup/*.html "$destination_folder/ui/popup/"
 
 echo "Files copied to ./dist folder."
 
