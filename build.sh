@@ -12,12 +12,22 @@ destination_folder_firefox="./dist-firefox"
 rm -rf "$destination_folder"
 rm -rf "$destination_folder_firefox"
 
+rm -rf ./ui/dist
+rm -rf ./worker/dist
+rm -rf ./content-scripts/dist
+rm -rf ./core/dist
+
 # Run npm run build in content-scripts folder
 cd content-scripts
 npm run build
 cd ..
 
-# Run npm run build in service-worker folder
+# Run npm run build in core folder
+cd core
+npm run build
+cd ..
+
+# Run npm run build in worker folder
 cd worker
 npm run build
 cd ..
@@ -40,27 +50,17 @@ cp -r "$images_folder"/* "$destination_folder/images"
 cp -r worker/dist/* "$destination_folder/worker"
 cp -r ui/dist/* "$destination_folder/ui"
 
-
 # Copy HTML files from the ui folder and its subfolders
-# find "$ui_folder/settings" -name "*.html" -exec cp {} "$destination_folder/settings/{}" \;
-# find "$ui_folder/popup" -name "*.html" -exec cp {} "$destination_folder/popup/{}" \;
 cp -r ui/src/settings/*.html "$destination_folder/ui/settings/"
-# cp "ui/src/popup/*.html "$destination_folder/ui/popup/"
 
-echo "Files copied to ./dist folder."
-
+# Create the zip file for Chrome
 mkdir -p ./bin
-
 cd "$destination_folder"
-
 zip -r -q -FS ../bin/ytc.zip *
-
 cd ..
 
+# Create the zip file for Firefox
 cp -r "$destination_folder" "$destination_folder_firefox"
-
 cp "$manifest_file_firefox" "$destination_folder_firefox/manifest.json"
-
 cd "$destination_folder_firefox"
-
 zip -r -q -FS ../bin/ytc.xpi *

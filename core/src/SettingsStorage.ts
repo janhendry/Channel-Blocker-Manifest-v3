@@ -41,15 +41,10 @@ export class SettingsStorage {
 	 * Fetch the settings from the server and local storage.
 	 */
 	public async fetchSettings() {
-		console.debug("Fetching settings from server and local storage");
+		// const rules = await this.cbClient.fetchSettings(this.id);
+		const storageSettings = (await chrome.storage.local.get()) as SettingsDTO;
 
-		const rules = await this.cbClient.fetchSettings(this.id);
-		const storageSettings = (await chrome.storage.local.get()) as Settings;
-
-		this.settings = mapDTOtoSettings({
-			rules,
-			ui: storageSettings.ui,
-		});
+		this.settings = mapDTOtoSettings(storageSettings);
 
 		// !FIXME: Why send 2 messages?
 		sendStorageChangedMessage();
@@ -61,7 +56,7 @@ export class SettingsStorage {
 	 */
 	public async pushSettings(): Promise<void> {
 		await chrome.storage.local.set(this.settings);
-		this.cbClient.updateSettings(mapRulesToDTO(this.settings.rules), this.id);
+		// this.cbClient.updateSettings(mapRulesToDTO(this.settings.rules), this.id);
 	}
 
 	/**
