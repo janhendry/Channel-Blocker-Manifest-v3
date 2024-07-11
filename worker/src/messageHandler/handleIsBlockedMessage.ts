@@ -1,5 +1,4 @@
-import type { IsBlockedMessage } from "../../../core/src/type/Messages";
-import { storage } from "../index";
+import { type IsBlockedMessage, storage } from "core";
 
 /**
  * Checks if the given userChannelName, videoTitle or commentContent matches any of the blocking rules.

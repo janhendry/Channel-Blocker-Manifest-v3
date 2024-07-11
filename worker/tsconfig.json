@@ -9,10 +9,10 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "composite": true,
         "verbatimModuleSyntax": true,
+        "composite": true,
         "lib": [
-            "es2023",
+            "es2022",
             "dom",
         ],
     },

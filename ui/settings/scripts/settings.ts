@@ -1,10 +1,10 @@
-import type { SettingsChangedMessage } from "../../../core/src/type/Messages.js";
 import {
 	CommunicationRole,
 	MessageType,
+	type SettingsChangedMessage,
 	SettingsDesign,
-} from "../../../core/src/type/enums.js";
-import { storage } from "../../../service-worker/ts/index.js";
+	storage,
+} from "core";
 
 const modeDropdown = document.getElementById(
 	"mode-dropdown",

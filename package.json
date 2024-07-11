@@ -1,0 +1,16 @@
+{
+    "name": "monorepo",
+    "private": true,
+    "workspaces": [
+        "core",
+        "ui",
+        "worker"
+    ],
+    "scripts": {
+        "build": "npm run build -w core && npm run build -w worker"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.268",
+        "typescript": "^4.0.0"
+    }
+}

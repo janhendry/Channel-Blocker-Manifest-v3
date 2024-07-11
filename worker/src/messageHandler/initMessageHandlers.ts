@@ -1,8 +1,7 @@
-import { CommunicationRole, MessageType } from "../../../core/src/index";
-import type { Message } from "../../../core/src/type/Messages";
+import { CommunicationRole, MessageType, storage } from "core";
+import type { Message } from "core";
 import { getConfigTabs } from "../helper";
-import { storage } from "../index";
-import { sendSettingsChangedMessage } from "../message.ts/sendSettingsChangedMessage";
+import { sendSettingsChangedMessage } from "../sendMessage/sendSettingsChangedMessage";
 import { handleAddBlockingRuleMessage } from "./handleAddBlockingRuleMessage";
 import { handleIsBlockedMessage } from "./handleIsBlockedMessage";
 import { handleRemoveBlockingRuleMessage } from "./handleRemoveBlockingRuleMessage";

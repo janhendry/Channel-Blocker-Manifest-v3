@@ -1,7 +1,7 @@
-import type { StorageChangedMessage } from "../../../core/src/type/Messages";
-import { storage } from "../index";
-import { sendSettingsChangedMessage } from "../message.ts/sendSettingsChangedMessage";
-import { sendStorageChangedMessage } from "../message.ts/sendStorageChangedMessage";
+import { type StorageChangedMessage, storage } from "core";
+
+import { sendSettingsChangedMessage } from "../sendMessage/sendSettingsChangedMessage";
+import { sendStorageChangedMessage } from "../sendMessage/sendStorageChangedMessage";
 
 /**
  * Reloads the storage and settings and sends a storage changed message to all tabs running YouTube.

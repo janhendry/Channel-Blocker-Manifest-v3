@@ -1,4 +1,4 @@
-import { SettingsState } from "../../../../core/src/index";
+import { SettingsState } from "core";
 import { initImportExport } from "../importExport";
 import { setSettingsState } from "../index";
 import { initNavigation } from "../navigation";

@@ -1,6 +1,5 @@
-import type { AddBlockingRuleMessage } from "../../../core/src/type/Messages";
-import { storage } from "../index";
-import { sendStorageChangedMessage } from "../message.ts/sendStorageChangedMessage";
+import { type AddBlockingRuleMessage, storage } from "core";
+import { sendStorageChangedMessage } from "../sendMessage/sendStorageChangedMessage";
 
 /**
  * Add a blocking rule to the storage and send a storage changed message to all tabs running YouTube.

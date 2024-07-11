@@ -1,4 +1,4 @@
-import { CbClient } from "../../../core/src/Client";
+import { CbClient } from "core";
 
 export function initNavigation() {
 	const burgerMenu = document.getElementById(
@@ -14,4 +14,4 @@ export function initNavigation() {
 	});
 }
 
-const client: CbClient = new CbClient("http://localhost:3000/settings");
+const client = new CbClient("http://localhost:3000/settings");

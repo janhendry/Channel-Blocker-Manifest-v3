@@ -1,7 +1,7 @@
-import { sendSettingsChangedMessage } from "../../service-worker/ts/message.ts/sendSettingsChangedMessage.js";
-import { sendStorageChangedMessage } from "../../service-worker/ts/message.ts/sendStorageChangedMessage.js";
 import { CbClient } from "./Client.js";
-import type { RulesDTO, Settings, SettingsDTO } from "./type/Settings.js";
+import { sendSettingsChangedMessage } from "./message/sendSettingsChangedMessage.js";
+import { sendStorageChangedMessage } from "./message/sendStorageChangedMessage.js";
+import type { Settings, SettingsDTO } from "./type/Settings.js";
 import { mapDTOtoRules, mapDTOtoSettings, mapRulesToDTO } from "./util.js";
 
 const defaultSettings: Settings = {

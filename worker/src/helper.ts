@@ -1,4 +1,4 @@
-import type { Tab } from "../../core/src/index";
+import type { Tab } from "core";
 
 /**
  * Limits a value to a range between a minimum and a maximum value.

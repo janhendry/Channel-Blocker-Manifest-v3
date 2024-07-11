@@ -16,7 +16,7 @@
         "tabs"
     ],
     "background": {
-        "service_worker": "service-worker/service-worker/ts/index.js",
+        "service_worker": "./worker/dist/index.js",
         "type": "module"
     },
     "content_scripts": [

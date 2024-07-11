@@ -1,6 +1,5 @@
-import type { RemoveBlockingRuleMessage } from "../../../core/src/type/Messages";
-import { storage } from "../index";
-import { sendStorageChangedMessage } from "../message.ts/sendStorageChangedMessage";
+import { type RemoveBlockingRuleMessage, storage } from "core";
+import { sendStorageChangedMessage } from "../sendMessage/sendStorageChangedMessage";
 
 /**
  * Remove a blocking rule from the storage and send a storage changed message to all tabs running YouTube.

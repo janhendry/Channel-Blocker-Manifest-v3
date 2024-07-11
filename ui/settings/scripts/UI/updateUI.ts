@@ -1,14 +1,10 @@
 import {
+	type AddBlockingRuleMessage,
 	CommunicationRole,
 	MessageType,
+	type RemoveBlockingRuleMessage,
 	SettingsState,
-} from "../../../../core/src/index";
-import type {
-	AddBlockingRuleMessage,
-	Message,
-	RemoveBlockingRuleMessage,
-} from "../../../../core/src/type/Messages";
-import { storage } from "../../../../service-worker/ts/index";
+} from "core";
 import { settingsState } from "../index";
 import { UI } from "./UI";
 import { updateRulesUI } from "./updateRulesUI";

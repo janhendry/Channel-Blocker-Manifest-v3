@@ -1,13 +1,11 @@
 import {
 	CommunicationRole,
 	MessageType,
-	SettingsDesign,
-	SettingsState,
-} from "../../../core/src/index.js";
-import type { StorageChangedMessage } from "../../../core/src/type/Messages.js";
-import type { Settings, SettingsDTO } from "../../../core/src/type/Settings";
-import { mapSettingsToDTO } from "../../../core/src/util.js";
-import { storage } from "../../../service-worker/ts/index.js";
+	type SettingsDTO,
+	type StorageChangedMessage,
+	mapSettingsToDTO,
+	storage,
+} from "core";
 
 /**
  * Initialize the import and export settings section.

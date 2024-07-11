@@ -1,6 +1,4 @@
-import type { Settings, UiSettings } from "../../../core/src/index";
-import type { RequestSettingsMessage } from "../../../core/src/type/Messages";
-import { storage } from "../index";
+import { type RequestSettingsMessage, type Settings, storage } from "core";
 
 /**
  * Returns the settings.

@@ -1,5 +1,4 @@
-import { SettingsState } from "../../../../core/src/index";
-import { storage } from "../../../../service-worker/ts/index";
+import { SettingsState, storage } from "core";
 import { settingsState } from "../index";
 import { UI } from "./UI";
 

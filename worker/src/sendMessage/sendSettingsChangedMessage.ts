@@ -1,6 +1,9 @@
-import { CommunicationRole, MessageType } from "../../../core/src/index";
-import type { SettingsChangedMessage } from "../../../core/src/type/Messages";
-import { storage } from "../index";
+import {
+	CommunicationRole,
+	MessageType,
+	type SettingsChangedMessage,
+	storage,
+} from "core";
 
 /**
  * Sends a settings changed message to all tabs that have YouTube open.
